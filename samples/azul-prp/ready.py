@@ -9,6 +9,7 @@ threshold = int(os.environ.get("OUTSTANDING_COMPILES_THRESHOLD", "500"))
 print(f"JMX_HOST={host}")
 print(f"JMX_PORT={port}")
 print(f"OUTSTANDING_COMPILES_THRESHOLD={threshold}")
+
 service_url = f"service:jmx:rmi:///jndi/rmi://{host}:{port}/jmxrmi"
 bean = "com.azul.zing:type=Compilation"
 attribute = "TotalOutstandingCompiles"
@@ -25,11 +26,29 @@ try:
 
     value = metrics[0].value
     print(value)
+
     if value < threshold:
-      sys.exit(0)
+        # Call finishWarmup() operation
+        print(f"Compiler queue depth is below threshold ({value} < {threshold}), ending warmup")
+        try:
+            result = conn.invoke_operation(bean, "finishWarmup", [])
+
+            if result:
+                print("Warmup complete")
+                sys.exit(0)
+            else:
+                print("finishWarmup() didn't succeed.", file=sys.stderr)
+                sys.exit(5)
+        except Exception as op_err:
+            print(f"Error invoking finishWarmup(): {op_err}", file=sys.stderr)
+            sys.exit(6)
     else:
-      print(f"TotalOutstandingCompiles still above threshold: {value} >= {threshold}", file=sys.stderr)
-      sys.exit(2)
+        print(
+            f"TotalOutstandingCompiles still above threshold: {value} >= {threshold}",
+            file=sys.stderr
+        )
+        sys.exit(2)
+
 except Exception as e:
     print(f"Error: {e}", file=sys.stderr)
     sys.exit(3)

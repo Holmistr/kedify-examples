@@ -29,7 +29,8 @@ renaissance-mit-$(RENAISSANCE_VERSION).jar:
 .PHONY: build-image
 build-image: build-base-image renaissance-mit-$(RENAISSANCE_VERSION).jar ## Builds the container (app) image for current arch.
 	@$(call say,Build app container image)
-	docker build . -f app.Dockerfile -t $(IMAGE)/azul-app:$(VERSION)
+	docker build . -f base.Dockerfile --push -t $(IMAGE)/azul-prime:21
+	docker build . -f app.Dockerfile --push -t $(IMAGE)/azul-app:$(VERSION)
 
 .PHONY: build-images-multiarch
 build-images-multiarch: ## Builds the container images for amd and arm arch and pushes them to container registry.

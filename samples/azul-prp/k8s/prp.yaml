@@ -13,6 +13,6 @@ spec:
   # these resources will be applied for the workload, once the compilation Q is low enough or all the work has been done
   newResources:
     requests:
-      cpu: "0.2"
+      cpu: "1"
     limits:
-      cpu: "0.2"
+      cpu: "1"

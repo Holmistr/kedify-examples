@@ -18,28 +18,24 @@ spec:
     spec:
       containers:
         - name: main
-          image: ghcr.io/kedify/azul-app:main
+          image: ghcr.io/holmistr/azul-app:main
+          env:
+            - name: REPETITIONS
+              value: "180"
+            - name: ADDITIONAL_JVM_ARGUMENTS
+              value: ""
           # initial resources for the workload (lifted)
           resources:
             requests:
-              cpu: 1
+              cpu: 2
             limits:
-              cpu: 1
-          startupProbe:
-            exec:
-              command: 
-              - sh
-              - -c
-              - "[ -f done ] || /ready.py"
-            initialDelaySeconds: 0
-            # read the compilation Q every 2 seconds
-            periodSeconds: 2
-            # python script should respond within 5 seconds
-            timeoutSeconds: 10
-            failureThreshold: 1
-            successThreshold: 1
+              cpu: 2
           readinessProbe:
             exec:
-              command: ["test", "-f", "done"]
+              command:
+                - sh
+                - -c
+                - "/ready.py"
             initialDelaySeconds: 10
             periodSeconds: 10
+            timeoutSeconds: 10
