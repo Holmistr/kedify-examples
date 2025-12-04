@@ -23,19 +23,21 @@ spec:
             - name: REPETITIONS
               value: "180"
             - name: ADDITIONAL_JVM_ARGUMENTS
-              value: ""
+              value: "-Xlog:gc:file=/gc.log -XX:CompilerWarmupPeriodSeconds=100000 -XX:CIMaxCompilerThreads=2 -XX:CompilerWarmupExtraThreads=6"
           # initial resources for the workload (lifted)
           resources:
             requests:
-              cpu: 2
+              cpu: 10
             limits:
-              cpu: 2
+              cpu: 10
           readinessProbe:
             exec:
               command:
                 - sh
                 - -c
-                - "/ready.py"
+                - |
+                  echo "[READINESS] running at $(date)" 1>&2
+                  /ready.py 2>&1
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 10

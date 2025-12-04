@@ -29,12 +29,12 @@ try:
 
     if value < threshold:
         # Call finishWarmup() operation
-        print(f"Compiler queue depth is below threshold ({value} < {threshold}), ending warmup")
+        print(f"Compiler queue depth is below threshold ({value} < {threshold}), ending warmup", file=sys.stderr)
         try:
             result = conn.invoke_operation(bean, "finishWarmup", [])
 
-            if result:
-                print("Warmup complete")
+            if result is True:
+                print("Warmup complete", file=sys.stderr)
                 sys.exit(0)
             else:
                 print("finishWarmup() didn't succeed.", file=sys.stderr)
